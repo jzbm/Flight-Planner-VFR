@@ -37,4 +37,4 @@ Technologie:
 -Backend (API): NestJS (Node.js 20), PostgreSQL (Prisma ORM), RabbitMQ (kolejki), Swagger/OpenAPI.
 
 Prototyp
-![alt text](image.png)
+![alt text](image.png).
