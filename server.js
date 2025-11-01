@@ -43,6 +43,13 @@ const server = http.createServer((req, res) => {
     const flightMatch = pathname.match(/^\/api\/flights\/(.+)$/);
     if (method === 'GET' && flightMatch) {
         const rawId = flightMatch[1];
+        // controlled error
+        if (!/^\d+$/.test(rawId)) {
+            return sendJson(res, 400, {
+                error: 'Bad Request',
+                message: 'Flight id must be a numeric value.',
+            });
+        }
         const id = Number(rawId);
         const flight = flights.find((f) => f.id === id);
 
