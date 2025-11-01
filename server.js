@@ -34,10 +34,33 @@ const server = http.createServer((req, res) => {
     const pathname = parsedUrl.pathname.replace(/\/+$/g, '') || '/';
     const method = req.method.toUpperCase();
 
+    // Endpoint
     if (method === 'GET' && pathname === '/api/flights') {
         return sendJson(res, 200, flights);
     }
 
+    // GET /api/flights/:id
+    const flightMatch = pathname.match(/^\/api\/flights\/(.+)$/);
+    if (method === 'GET' && flightMatch) {
+        const rawId = flightMatch[1];
+        const id = Number(rawId);
+        const flight = flights.find((f) => f.id === id);
+
+        if (!flight) {
+            return sendJson(res, 404, {
+                error: 'Not Found',
+                message: `Flight with id=${id} does not exist.`,
+            });
+        }
+
+        return sendJson(res, 200, flight);
+    }
+
+    // Fallback 404
+    return sendJson(res, 404, {
+        error: 'Not Found',
+        message: 'Endpoint is not defined.',
+    });
 });
 
 server.listen(PORT, () => {
