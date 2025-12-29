@@ -84,8 +84,29 @@ model Airport {
   longitude       Float
   elevation       Int
   
+  // Airport type
+  airportType     AirportType @default(VFR)
+  hasWeatherStation Boolean @default(false)
+  
+  // Frequencies
+  towerFreq       String?
+  groundFreq      String?
+  atisFreq        String?
+  approachFreq    String?
+  afisFreq        String?
+  
+  // Additional info
+  fuelAvailable   Boolean   @default(false)
+  lightingAvail   Boolean   @default(false)
+  
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   
   @@map("airports")
+}
+
+enum AirportType {
+  IFR
+  VFR
+  MIL
 }
