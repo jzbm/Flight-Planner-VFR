@@ -21,6 +21,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   
   aircraft      Aircraft[]
+  flightPlans   FlightPlan[]
   
   @@map("users")
 }
@@ -63,6 +64,8 @@ model Aircraft {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   
+  flightPlans     FlightPlan[]
+  
   @@map("aircraft")
 }
 
@@ -104,6 +107,10 @@ model Airport {
   
   runways         Runway[]
   
+  departures      FlightPlan[] @relation("DepartureAirport")
+  arrivals        FlightPlan[] @relation("ArrivalAirport")
+  alternates      FlightPlan[] @relation("AlternateAirport")
+  
   @@map("airports")
 }
 
@@ -130,4 +137,58 @@ model Runway {
   threshold2Lon   Float?
   
   @@map("runways")
+}
+
+// FLIGHT PLAN 
+model FlightPlan {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  name            String?
+  
+  // Aircraft
+  aircraftId      String?
+  aircraft        Aircraft? @relation(fields: [aircraftId], references: [id])
+  
+  // Airports
+  departureId     String?
+  departure       Airport?  @relation("DepartureAirport", fields: [departureId], references: [id])
+  arrivalId       String?
+  arrival         Airport?  @relation("ArrivalAirport", fields: [arrivalId], references: [id])
+  alternateId     String?
+  alternate       Airport?  @relation("AlternateAirport", fields: [alternateId], references: [id])
+  
+  // Flight details
+  plannedDate     DateTime?
+  plannedTime     String?
+  cruiseAltitude  Int?
+  cruiseSpeed     Float?
+  
+  // W&B
+  pilotWeight     Float?
+  passengerWeight Float?
+  baggageWeight   Float?
+  fuelWeight      Float?
+  
+  // Calculated values
+  totalDistance   Float?
+  totalTime       Int?
+  fuelRequired    Float?
+  
+  // Status
+  status          FlightPlanStatus @default(DRAFT)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@map("flight_plans")
+}
+
+enum FlightPlanStatus {
+  DRAFT
+  PLANNED
+  ACTIVE
+  COMPLETED
+  CANCELLED
 }
