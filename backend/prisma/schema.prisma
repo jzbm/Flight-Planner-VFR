@@ -20,5 +20,33 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   
+  aircraft      Aircraft[]
+  
   @@map("users")
+}
+
+// ==================== AIRCRAFT ====================
+model Aircraft {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  registration    String
+  type            String
+  name            String?
+  
+  // Performance data
+  cruiseSpeed     Float
+  fuelConsumption Float
+  fuelUnit        FuelUnit  @default(LITERS)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@map("aircraft")
+}
+
+enum FuelUnit {
+  LITERS
+  GALLONS
 }
