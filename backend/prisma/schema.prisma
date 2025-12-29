@@ -102,6 +102,8 @@ model Airport {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   
+  runways         Runway[]
+  
   @@map("airports")
 }
 
@@ -109,4 +111,23 @@ enum AirportType {
   IFR
   VFR
   MIL
+}
+
+model Runway {
+  id              String    @id @default(uuid())
+  airportId       String
+  airport         Airport   @relation(fields: [airportId], references: [id], onDelete: Cascade)
+  
+  designation     String
+  length          Int
+  width           Int
+  surface         String
+  heading         Int
+  
+  threshold1Lat   Float?
+  threshold1Lon   Float?
+  threshold2Lat   Float?
+  threshold2Lon   Float?
+  
+  @@map("runways")
 }
