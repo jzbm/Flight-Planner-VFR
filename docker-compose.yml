@@ -22,6 +22,27 @@ services:
       timeout: 5s
       retries: 5
 
+  # RabbitMQ Message Queue
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: fpl-vfr-rabbitmq
+    restart: unless-stopped
+    environment:
+      RABBITMQ_DEFAULT_USER: fplvfr
+      RABBITMQ_DEFAULT_PASS: fplvfr_secret
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - fpl-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   # NestJS Backend API
   backend:
     build:
@@ -32,6 +53,7 @@ services:
     environment:
       NODE_ENV: development
       DATABASE_URL: postgresql://fplvfr:fplvfr_secret@postgres:5432/fplvfr?schema=public
+      RABBITMQ_URL: amqp://fplvfr:fplvfr_secret@rabbitmq:5672
       JWT_SECRET: your-super-secret-jwt-key-change-in-production
       PORT: 3001
     ports:
@@ -41,6 +63,8 @@ services:
       - /app/node_modules
     depends_on:
       postgres:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
     networks:
       - fpl-network
@@ -70,6 +94,7 @@ services:
 
 volumes:
   postgres_data:
+  rabbitmq_data:
 
 networks:
   fpl-network:
