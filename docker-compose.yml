@@ -1,24 +1,76 @@
-version: "3.9"
+version: '3.8'
 
 services:
+  # PostgreSQL Database
   postgres:
-    image: postgres:16
+    image: postgres:16-alpine
+    container_name: fpl-vfr-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: fpl
-      POSTGRES_PASSWORD: fplpass
-      POSTGRES_DB: fpldb
+      POSTGRES_USER: fplvfr
+      POSTGRES_PASSWORD: fplvfr_secret
+      POSTGRES_DB: fplvfr
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - fpl-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fplvfr"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  rabbitmq:
-    image: rabbitmq:3-management
+  # NestJS Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fpl-vfr-backend
     restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://fplvfr:fplvfr_secret@postgres:5432/fplvfr?schema=public
+      JWT_SECRET: your-super-secret-jwt-key-change-in-production
+      PORT: 3001
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "3001:3001"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - fpl-network
+    command: npm run start:dev
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: fpl-vfr-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_API_URL: http://localhost:3001
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+    networks:
+      - fpl-network
+    command: npm run dev
 
 volumes:
   postgres_data:
+
+networks:
+  fpl-network:
+    driver: bridge

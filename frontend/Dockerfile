@@ -1,16 +1,13 @@
 FROM node:20-alpine
+
 WORKDIR /app
 
-COPY package.json ./
-COPY tsconfig.json next.config.mjs ./
-COPY next-env.d.ts ./
+COPY package*.json ./
 
 RUN npm install
 
-COPY app ./app
-
-RUN npm run build || echo "Build skipped: add Next.js pages"
+COPY . .
 
 EXPOSE 3000
 
-CMD [ "npm", "run", "dev" ]
+CMD ["npm", "run", "dev"]

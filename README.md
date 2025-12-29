@@ -1,4 +1,4 @@
-# ✈️ FPL VFR - Flight Planner for VFR Flights
+# FPL VFR - Flight Planner for VFR Flights
 
 > Kompleksowa aplikacja webowa do planowania lotów VFR (Visual Flight Rules) z automatycznymi obliczeniami nawigacyjnymi, integracją danych pogodowych i generowaniem dokumentacji lotniczej.
 
@@ -11,7 +11,7 @@
 
 ---
 
-## 📋 Spis treści
+## Spis treści
 
 - [Funkcjonalności](#-funkcjonalności)
 - [Stack technologiczny](#-stack-technologiczny)
@@ -19,7 +19,7 @@
 
 ---
 
-## 🚀 Funkcjonalności
+## Funkcjonalności
 
 ### 1) Trasa na mapie
 - Dodawanie punktów trasy kliknięciem
@@ -50,7 +50,7 @@
 
 ---
 
-## 🛠 Stack technologiczny
+## Stack technologiczny
 
 ### Frontend
 - **Next.js 14** - App Router, SSR
@@ -66,12 +66,12 @@
 
 ---
 
-## 📱 Prototyp
+##  Prototyp
 
 ![Prototyp aplikacji](image.png)
 
 ---
 
-## 👨‍💻 Autor
+##  Autor
 
 Projekt stworzony na potrzeby przedmiotu **ZTPAI**.

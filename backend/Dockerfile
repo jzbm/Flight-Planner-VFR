@@ -1,19 +1,15 @@
 FROM node:20-alpine
+
 WORKDIR /app
 
-# Copy dependency manifests
-COPY package.json ./
-COPY tsconfig.json nest-cli.json ./
-COPY prisma ./prisma
+COPY package*.json ./
 
 RUN npm install
 
-# Copy (empty for now) source tree
-COPY src ./src
+COPY . .
 
-# Build stage placeholder (will succeed once src/main.ts exists)
-RUN npm run build || echo "Build skipped: add source files to compile"
+RUN npm run build
 
-EXPOSE 3000
+EXPOSE 3001
 
-CMD [ "npm", "run", "start:dev" ]
+CMD ["npm", "run", "start:dev"]
