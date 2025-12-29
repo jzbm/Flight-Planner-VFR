@@ -40,6 +40,18 @@ model Aircraft {
   fuelConsumption Float
   fuelUnit        FuelUnit  @default(LITERS)
   
+  // Weight & Balance
+  emptyWeight     Float
+  maxTakeoffWeight Float
+  usableFuel      Float
+  
+  // Arm positions (for CG calculation)
+  emptyWeightArm      Float?
+  fuelArm             Float?
+  frontSeatArm        Float?
+  rearSeatArm         Float?
+  baggageArm          Float?
+  
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   
