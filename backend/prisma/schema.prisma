@@ -70,3 +70,22 @@ enum FuelUnit {
   LITERS
   GALLONS
 }
+
+// airports 
+model Airport {
+  id              String    @id @default(uuid())
+  icaoCode        String    @unique
+  iataCode        String?
+  name            String
+  city            String?
+  country         String
+  
+  latitude        Float
+  longitude       Float
+  elevation       Int
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  @@map("airports")
+}
