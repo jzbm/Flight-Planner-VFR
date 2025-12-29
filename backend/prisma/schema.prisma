@@ -198,7 +198,7 @@ enum FlightPlanStatus {
   CANCELLED
 }
 
-// ==================== WAYPOINTS ====================
+// WAYPOINTS
 model Waypoint {
   id              String    @id @default(uuid())
   flightPlanId    String
@@ -235,7 +235,7 @@ enum WaypointType {
   VISUAL
 }
 
-// ==================== FLIGHT LEGS ====================
+// FLIGHT LEGS
 model FlightLeg {
   id              String    @id @default(uuid())
   flightPlanId    String
@@ -270,4 +270,45 @@ model FlightLeg {
   createdAt       DateTime  @default(now())
   
   @@map("flight_legs")
+}
+
+// WEATHER CACHE
+model WeatherData {
+  id              String    @id @default(uuid())
+  icaoCode        String
+  type            WeatherType
+  
+  rawData         String
+  parsedData      Json?
+  
+  validFrom       DateTime
+  validTo         DateTime?
+  
+  fetchedAt       DateTime  @default(now())
+  
+  @@unique([icaoCode, type])
+  @@map("weather_data")
+}
+
+enum WeatherType {
+  METAR
+  TAF
+  GAMET
+}
+
+// NOTAM CACHE
+model NotamData {
+  id              String    @id @default(uuid())
+  icaoCode        String
+  notamId         String
+  
+  rawText         String
+  type            String?
+  
+  effectiveFrom   DateTime
+  effectiveTo     DateTime?
+  
+  fetchedAt       DateTime  @default(now())
+  
+  @@map("notam_data")
 }
