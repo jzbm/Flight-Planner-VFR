@@ -110,6 +110,7 @@ model Airport {
   departures      FlightPlan[] @relation("DepartureAirport")
   arrivals        FlightPlan[] @relation("ArrivalAirport")
   alternates      FlightPlan[] @relation("AlternateAirport")
+  waypoints       Waypoint[]
   
   @@map("airports")
 }
@@ -179,6 +180,10 @@ model FlightPlan {
   // Status
   status          FlightPlanStatus @default(DRAFT)
   
+  // Route
+  waypoints       Waypoint[]
+  legs            FlightLeg[]
+  
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   
@@ -191,4 +196,78 @@ enum FlightPlanStatus {
   ACTIVE
   COMPLETED
   CANCELLED
+}
+
+// ==================== WAYPOINTS ====================
+model Waypoint {
+  id              String    @id @default(uuid())
+  flightPlanId    String
+  flightPlan      FlightPlan @relation(fields: [flightPlanId], references: [id], onDelete: Cascade)
+  
+  sequence        Int
+  name            String
+  type            WaypointType
+  
+  latitude        Float
+  longitude       Float
+  altitude        Int?
+  
+  // Optional link to airport
+  airportId       String?
+  airport         Airport?  @relation(fields: [airportId], references: [id])
+  
+  notes           String?
+  
+  createdAt       DateTime  @default(now())
+  
+  legFrom         FlightLeg[] @relation("LegFrom")
+  legTo           FlightLeg[] @relation("LegTo")
+  
+  @@map("waypoints")
+}
+
+enum WaypointType {
+  AIRPORT
+  VOR
+  NDB
+  FIX
+  GPS
+  VISUAL
+}
+
+// ==================== FLIGHT LEGS ====================
+model FlightLeg {
+  id              String    @id @default(uuid())
+  flightPlanId    String
+  flightPlan      FlightPlan @relation(fields: [flightPlanId], references: [id], onDelete: Cascade)
+  
+  sequence        Int
+  
+  fromWaypointId  String
+  fromWaypoint    Waypoint  @relation("LegFrom", fields: [fromWaypointId], references: [id])
+  toWaypointId    String
+  toWaypoint      Waypoint  @relation("LegTo", fields: [toWaypointId], references: [id])
+  
+  // Calculated navigation data
+  distance        Float
+  trueCourse      Float
+  magneticCourse  Float
+  windCorrection  Float?
+  heading         Float?
+  groundSpeed     Float?
+  
+  // Time
+  ete             Int?
+  eta             String?
+  
+  // Fuel for this leg
+  fuelBurn        Float?
+  
+  // Wind data used
+  windDirection   Int?
+  windSpeed       Int?
+  
+  createdAt       DateTime  @default(now())
+  
+  @@map("flight_legs")
 }
