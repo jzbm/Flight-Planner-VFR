@@ -1,9 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { AircraftService } from './aircraft.service';
 import { CreateAircraftDto } from './dto/create-aircraft.dto';
 import { UpdateAircraftDto } from './dto/update-aircraft.dto';
+import { WeightBalanceInputDto, WeightBalanceResultDto } from './dto/weight-balance.dto';
 
 @ApiTags('aircraft')
 @Controller('aircraft')
@@ -40,5 +41,16 @@ export class AircraftController {
   @ApiOperation({ summary: 'Delete aircraft' })
   remove(@Param('id') id: string, @Request() req) {
     return this.aircraftService.remove(id, req.user.userId);
+  }
+
+  @Post(':id/weight-balance')
+  @ApiOperation({ summary: 'Calculate weight and balance for aircraft' })
+  @ApiResponse({ status: 200, description: 'Weight and balance calculation result', type: WeightBalanceResultDto })
+  calculateWeightBalance(
+    @Param('id') id: string,
+    @Request() req,
+    @Body() input: WeightBalanceInputDto,
+  ) {
+    return this.aircraftService.calculateWeightBalance(id, req.user.userId, input);
   }
 }
