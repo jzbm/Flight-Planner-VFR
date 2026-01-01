@@ -106,4 +106,49 @@ export class FlightPlansService {
       where: { id },
     });
   }
+
+  async addLegs(id: string, userId: string, legs: any[]) {
+    await this.findOne(id, userId);
+
+    // Delete existing legs
+    await this.prisma.flightLeg.deleteMany({
+      where: { flightPlanId: id },
+    });
+
+    // Calculate totals
+    const totalDistance = legs.reduce((sum, leg) => sum + leg.distance, 0);
+    const totalTime = legs.reduce((sum, leg) => sum + leg.ete, 0);
+    const totalFuel = legs.reduce((sum, leg) => sum + leg.fuelRequired, 0);
+
+    // Create new legs and update flight plan
+    await this.prisma.flightLeg.createMany({
+      data: legs.map((leg) => ({
+        ...leg,
+        flightPlanId: id,
+      })),
+    });
+
+    return this.prisma.flightPlan.update({
+      where: { id },
+      data: {
+        totalDistance,
+        estimatedTime: totalTime,
+        fuelRequired: totalFuel,
+      },
+      include: {
+        legs: { orderBy: { sequence: 'asc' } },
+        waypoints: { orderBy: { sequence: 'asc' } },
+        aircraft: true,
+      },
+    });
+  }
+
+  async getLegs(id: string, userId: string) {
+    await this.findOne(id, userId);
+
+    return this.prisma.flightLeg.findMany({
+      where: { flightPlanId: id },
+      orderBy: { sequence: 'asc' },
+    });
+  }
 }
