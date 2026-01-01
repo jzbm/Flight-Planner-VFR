@@ -89,6 +89,49 @@ export class CalculationsService {
     };
   }
 
+  calculateFuel(input: {
+    fuelConsumptionRate: number;
+    tripTime: number;
+    taxiFuel?: number;
+    contingencyPercent?: number;
+    alternateFuel?: number;
+    finalReserveMinutes?: number;
+  }) {
+    const {
+      fuelConsumptionRate,
+      tripTime,
+      taxiFuel = 5,
+      contingencyPercent = 10,
+      alternateFuel = 0,
+      finalReserveMinutes = 45,
+    } = input;
+
+    // Trip fuel = consumption rate * time in hours
+    const tripFuel = fuelConsumptionRate * (tripTime / 60);
+
+    // Contingency fuel (percentage of trip fuel)
+    const contingencyFuel = tripFuel * (contingencyPercent / 100);
+
+    // Final reserve fuel (typically 45 minutes at cruise consumption)
+    const finalReserveFuel = fuelConsumptionRate * (finalReserveMinutes / 60);
+
+    // Minimum fuel required (without taxi)
+    const minimumFuel = tripFuel + contingencyFuel + alternateFuel + finalReserveFuel;
+
+    // Total fuel including taxi
+    const totalFuel = minimumFuel + taxiFuel;
+
+    return {
+      tripFuel: Math.round(tripFuel * 10) / 10,
+      taxiFuel: Math.round(taxiFuel * 10) / 10,
+      contingencyFuel: Math.round(contingencyFuel * 10) / 10,
+      alternateFuel: Math.round(alternateFuel * 10) / 10,
+      finalReserveFuel: Math.round(finalReserveFuel * 10) / 10,
+      minimumFuel: Math.round(minimumFuel * 10) / 10,
+      totalFuel: Math.round(totalFuel * 10) / 10,
+    };
+  }
+
   private toRadians(degrees: number): number {
     return degrees * (Math.PI / 180);
   }
