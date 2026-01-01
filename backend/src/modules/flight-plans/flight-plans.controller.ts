@@ -41,4 +41,16 @@ export class FlightPlansController {
   remove(@Param('id') id: string, @Request() req) {
     return this.flightPlansService.remove(id, req.user.userId);
   }
+
+  @Post(':id/legs')
+  @ApiOperation({ summary: 'Add calculated legs to flight plan' })
+  addLegs(@Param('id') id: string, @Request() req, @Body() legs: any[]) {
+    return this.flightPlansService.addLegs(id, req.user.userId, legs);
+  }
+
+  @Get(':id/legs')
+  @ApiOperation({ summary: 'Get flight plan legs' })
+  getLegs(@Param('id') id: string, @Request() req) {
+    return this.flightPlansService.getLegs(id, req.user.userId);
+  }
 }
