@@ -20,6 +20,15 @@ module.exports = {
           800: '#1e40af',
           900: '#1e3a8a',
         },
+        aviation: {
+          sky: '#87CEEB',
+          ground: '#8B4513',
+          warning: '#FF8C00',
+          danger: '#DC143C',
+        },
+      },
+      fontFamily: {
+        mono: ['JetBrains Mono', 'monospace'],
       },
     },
   },
