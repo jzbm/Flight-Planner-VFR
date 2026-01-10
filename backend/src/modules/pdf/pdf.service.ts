@@ -114,4 +114,83 @@ export class PdfService {
       doc.end();
     });
   }
+
+  async generateWeatherBriefingPdf(data: {
+    icaoCode: string;
+    metar?: any;
+    taf?: any;
+    notams?: any[];
+  }): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const doc = new PDFDocument({ margin: 50 });
+      const chunks: Buffer[] = [];
+
+      doc.on('data', (chunk) => chunks.push(chunk));
+      doc.on('end', () => resolve(Buffer.concat(chunks)));
+      doc.on('error', reject);
+
+      // Header
+      doc.fontSize(20).font('Helvetica-Bold').text('WEATHER BRIEFING', { align: 'center' });
+      doc.fontSize(14).text(data.icaoCode, { align: 'center' });
+      doc.moveDown();
+
+      // METAR
+      if (data.metar) {
+        doc.fontSize(12).font('Helvetica-Bold').text('METAR');
+        doc.fontSize(10).font('Helvetica').text(data.metar.raw || 'No METAR available');
+        doc.moveDown();
+
+        if (data.metar.flightCategory) {
+          doc.text(`Flight Category: ${data.metar.flightCategory}`);
+        }
+        if (data.metar.windDirection !== undefined) {
+          doc.text(`Wind: ${data.metar.windDirection}° / ${data.metar.windSpeed} kt`);
+        }
+        if (data.metar.visibility !== undefined) {
+          doc.text(`Visibility: ${data.metar.visibility} m`);
+        }
+        if (data.metar.temperature !== undefined) {
+          doc.text(`Temperature: ${data.metar.temperature}°C / Dew Point: ${data.metar.dewPoint}°C`);
+        }
+        if (data.metar.qnh !== undefined) {
+          doc.text(`QNH: ${data.metar.qnh} hPa`);
+        }
+        doc.moveDown();
+      }
+
+      // TAF
+      if (data.taf) {
+        doc.fontSize(12).font('Helvetica-Bold').text('TAF');
+        doc.fontSize(10).font('Helvetica').text(data.taf.raw || 'No TAF available');
+        doc.moveDown();
+      }
+
+      // NOTAMs
+      if (data.notams && data.notams.length > 0) {
+        doc.fontSize(12).font('Helvetica-Bold').text(`NOTAMs (${data.notams.length})`);
+        doc.moveDown(0.5);
+
+        data.notams.forEach((notam, index) => {
+          doc.fontSize(10).font('Helvetica-Bold').text(`${index + 1}. ${notam.notamId || 'NOTAM'}`);
+          doc.fontSize(9).font('Helvetica').text(notam.description || notam.raw || '');
+          doc.text(`Valid: ${notam.effectiveFrom} - ${notam.effectiveTo}`);
+          doc.moveDown(0.5);
+
+          if (doc.y > 700) {
+            doc.addPage();
+          }
+        });
+      }
+
+      // Footer
+      doc.fontSize(8).text(
+        `Generated: ${new Date().toISOString()}`,
+        50,
+        doc.page.height - 50,
+        { align: 'center' },
+      );
+
+      doc.end();
+    });
+  }
 }
