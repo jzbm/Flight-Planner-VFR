@@ -438,6 +438,26 @@ npm run test
 
 ---
 
+#### Zdjęcia aplikacji
+
+<img width="1913" height="916" alt="obraz" src="https://github.com/user-attachments/assets/f58505a7-843d-4730-b803-a0f387cf6ea6" />
+
+<img width="1908" height="911" alt="obraz" src="https://github.com/user-attachments/assets/ba6a4442-d52f-4dc1-8021-121e4e8b071c" />
+
+<img width="1475" height="903" alt="obraz" src="https://github.com/user-attachments/assets/c1331068-a78d-45f7-865e-9297c2f2ebbf" />
+
+<img width="1830" height="907" alt="obraz" src="https://github.com/user-attachments/assets/4c5fe016-6663-45ac-b0bf-940a3952a7ba" />
+
+<img width="1285" height="884" alt="obraz" src="https://github.com/user-attachments/assets/5f2e61ba-0cf5-4561-b8a7-e9730d9b33cc" />
+
+<img width="1342" height="906" alt="obraz" src="https://github.com/user-attachments/assets/41a5f326-71e2-4ddc-aa66-f6bff708f89c" />
+
+<img width="364" height="710" alt="obraz" src="https://github.com/user-attachments/assets/62556486-fe76-4e60-982d-96f7e3d2bd67" />
+
+<img width="364" height="708" alt="obraz" src="https://github.com/user-attachments/assets/8aaf4e32-5d5c-4466-ba91-107ee65a9ece" />
+
+<img width="362" height="715" alt="obraz" src="https://github.com/user-attachments/assets/7edbe042-fe9c-45e6-a721-f3576cf628f7" />
+
 ## Licencja
 
 MIT License
